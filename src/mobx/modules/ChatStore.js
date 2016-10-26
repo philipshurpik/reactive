@@ -23,12 +23,34 @@ export default class ChatStore {
       runInAction('#fetchChat success', () => {
         this.name = name;
         this.phase = SUCCESS;
-        this.messages = List(messages);
+        this.messages = List(messages.map(message => ({message})));
       });
     } catch (error) {
       runInAction('#fetchChat error', () => {
         this.phase = ERROR;
         this.error = String(error);
+      });
+    }
+  }
+
+  @action resetChat() {
+    this.name = null;
+    this.messages = List();
+    this.phase = INIT;
+    this.error = null;
+  }
+
+  @action async addMessage(message) {
+    try {
+      this.messages = this.messages.push({message, phase: LOADING});
+
+      const messages = await api.addMessage(this.name, message);
+      runInAction('#addMessage success', () => {
+        this.messages = List(messages.map(message => ({message})));
+      });
+    } catch(error) {
+      runInAction('@addMessage error', () => {
+        this.messages = this.messages.pop().push({message, phase: ERROR, error});
       });
     }
   }

@@ -27,3 +27,13 @@ export function fetchMessages(name) {  // eslint-disable-line import/prefer-defa
     }, 1000);
   });
 }
+
+export function addMessage(name, message) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      Math.random() > 0.5 ?
+          resolve(chats[name].push(message) && chats[name]) :
+          reject('add error happened');
+    }, 500)
+  })
+}

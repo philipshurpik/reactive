@@ -5,7 +5,8 @@ const Messages = props => (
   <ul className="Messages list-group">
     {props.messages.map((msg, index) =>
       <li key={index} className="list-group-item">
-        <span>{msg}</span>
+        <span>{msg.message}</span>
+        <span style={{paddingLeft: 50}}>{msg.error || msg.phase}</span>
       </li>
     )}
   </ul>

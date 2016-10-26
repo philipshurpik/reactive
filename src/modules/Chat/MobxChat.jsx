@@ -23,6 +23,7 @@ export default class MobxChat extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleAddMessage = this.handleAddMessage.bind(this);
 
     this.state = {
       name: props.routeParams.name || '',
@@ -37,6 +38,10 @@ export default class MobxChat extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.chat.resetChat();
+  }
+
   handleChange(ev) {
     this.setState({
       name: ev.target.value,
@@ -49,6 +54,14 @@ export default class MobxChat extends Component {
 
     this.props.chat.fetchChat(name);
     router.push(`/mobxchat/${name}`);
+  }
+
+  handleAddMessage(e) {
+    if (e.key === 'Enter') {
+      console.log(e.target.value);
+      this.props.chat.addMessage(e.target.value);
+      e.target.value = "";
+    }
   }
 
   render() {
@@ -88,16 +101,22 @@ export default class MobxChat extends Component {
               <h4>Loading...</h4>
             }
 
-            {chat.phase === SUCCESS &&
+            {(chat.phase === SUCCESS || chat.phase === ERROR) &&
               <div className="panel panel-default">
                 <div className="panel-heading">
-                  <h3 className="panel-title">Chat</h3>
+                  <h3 className="panel-title">Chat {chat.messages.size}</h3>
                 </div>
                 <div className="panel-body">
                   {chat.name === 'doge' &&
                     <img src="/assets/doge.jpg" alt="doge" />
                   }
                   <Messages messages={chat.messages} />
+                  <input
+                      type="text"
+                      onKeyPress={this.handleAddMessage}
+                      className="form-control"
+                      placeholder="Add message and press Enter..."
+                  />
                 </div>
               </div>
             }
